@@ -1,12 +1,17 @@
 var data = "";
+const buffer = [];
 var rows = [];
 var r_index = 0;
 
 var pages_parsed = 0;
 var pages_to_parse = 0;
 var needStop = false;
-var minDelay = 2000;
-var maxDelay = 3500;
+// между контактами
+var minDelayContact = 300;
+var maxDelayContact = 600;
+//между страницами
+var minDelay = 1000;
+var maxDelay = 2000;
 let intervalEnd;
 
 // Создаем полупрозрачное окно
@@ -53,6 +58,23 @@ windowContainer.appendChild(stopButton);
 const label1 = document.createElement('div');
 label1.style.marginTop = '1em';
 windowContainer.appendChild(label1);
+
+const audio = document.createElement('audio');
+audio.controls = true;
+audio.style.display = 'none';
+
+const source = document.createElement('source');
+source.src = "https://www.computerhope.com/jargon/m/example.mp3";
+audio.appendChild(source);
+windowContainer.appendChild(audio);
+
+const stopAudioBtn = document.createElement('button');
+stopAudioBtn.textContent = 'Остановить аудио';
+stopAudioBtn.style.width = '100%';
+stopAudioBtn.style.marginTop = '1em';
+stopAudioBtn.style.display = 'none';
+windowContainer.appendChild(stopAudioBtn);
+
 
 // Добавляем таблицу
 /*const table = document.createElement('table');
@@ -109,21 +131,11 @@ startButton.addEventListener('click', () => {
 	  parsePage();
     });
 
-stopButton.addEventListener('click', () => {
-		
-		needStop = true;
-		setTimeout(function beep() {
-  if (pages_parsed >= pages_to_parse) {
-    console.log("\007");
-    setTimeout(beep, 60000); // Beep every 60 seconds
-  }
-}, 60000);
-	});
 
 // Функция для копирования данных в буфер обмена
 function copyDataToClipboard() {
   const textarea = document.createElement('textarea');
-  textarea.value = data;
+  textarea.value = buffer.join();
   document.body.appendChild(textarea);
   textarea.select();
   document.execCommand('copy');
@@ -208,6 +220,11 @@ function getContacts() {
 		}
 	}
 	data += '\n';
+
+	if(!buffer.includes(data)) {
+		buffer.push(data);
+	}
+	data = '';
 	
 	r_index++;
 	
@@ -255,7 +272,7 @@ function getContacts() {
 	}
 	
 	if(r_index < rows.length) {
-		setTimeout(showContacts, getRandomInt(minDelay, maxDelay));
+		setTimeout(showContacts, getRandomInt(minDelayContact, maxDelayContact));
     } else {
 		pages_parsed++;
 		if(pages_parsed >= pages_to_parse) {
@@ -267,6 +284,10 @@ function getContacts() {
 				setTimeout(parsePage, getRandomInt(minDelay, maxDelay));
 			} else {
 				console.log(data);
+				stopAudioBtn.style.display = 'block';
+				intervalEnd = setInterval(function () {
+					audio.play();
+				}, 10000);
 			}
 		}
     }
@@ -343,7 +364,7 @@ function showContacts() {
 		
 		let btn = null;//cols[8].querySelector('a');
 		if(btn != null) {
-			if(btn.innerText == 'Request Mobile Number') {
+			if(btn.innerText === 'Request Mobile Number') {
 				
 				//console.log('Need number');
 				
@@ -358,7 +379,7 @@ function showContacts() {
 				btn.dispatchEvent(mouseEnterEvent);
 				btn.click();
 				
-				setTimeout(getContacts, getRandomInt(minDelay, maxDelay));
+				setTimeout(getContacts, getRandomInt(minDelayContact, maxDelayContact));
 			} else {
 				//console.log('Number exists');
 				
@@ -369,6 +390,11 @@ function showContacts() {
 					}
 				}
 				data += '\n';
+
+				if(!buffer.includes(data)) {
+					buffer.push(data);
+				}
+				data = '';
 				
 				r_index++;
 				
@@ -380,7 +406,7 @@ function showContacts() {
 				}
 				
 				if(r_index < rows.length) {
-					setTimeout(showContacts, getRandomInt(minDelay, maxDelay));
+					setTimeout(showContacts, getRandomInt(minDelayContact, maxDelayContact));
 				} else {
 					pages_parsed++;
 					if(pages_parsed >= pages_to_parse) {
@@ -392,6 +418,10 @@ function showContacts() {
 							setTimeout(parsePage, getRandomInt(minDelay, maxDelay));
 						} else {
 							console.log(data);
+							stopAudioBtn.style.display = 'block';
+							intervalEnd = setInterval(function () {
+								audio.play();
+							}, 10000);
 						}
 					}
 				}
@@ -406,6 +436,12 @@ function showContacts() {
 				}
 			}
 			data += '\n';
+
+			if(!buffer.includes(data)) {
+				buffer.push(data);
+			}
+
+			data = '';
 			
 			r_index++;
 			
@@ -417,7 +453,7 @@ function showContacts() {
 			}
 			
 			if(r_index < rows.length) {
-				setTimeout(showContacts, getRandomInt(minDelay, maxDelay));
+				setTimeout(showContacts, getRandomInt(minDelayContact, maxDelayContact));
 			} else {
 				pages_parsed++;
 				if(pages_parsed >= pages_to_parse) {
@@ -429,6 +465,10 @@ function showContacts() {
 						setTimeout(parsePage, getRandomInt(minDelay, maxDelay));
 					} else {
 						console.log(data);
+						stopAudioBtn.style.display = 'block';
+						intervalEnd = setInterval(function () {
+							audio.play();
+						}, 10000);
 					}
 				}
 			}
@@ -456,13 +496,14 @@ function showContacts() {
 		console.log(err);
 		r_index++;
 		if(r_index < rows.length) {
-			setTimeout(showContacts, getRandomInt(minDelay, maxDelay));
+			setTimeout(showContacts, getRandomInt(minDelayContact, maxDelayContact));
 		} else {
 			pages_parsed++;
 			if(pages_parsed >= pages_to_parse) {
-				console.log(data); 
+				console.log(data);
+				stopAudioBtn.style.display = 'block';
 				intervalEnd = setInterval(function () {
-					console.log('end');
+					audio.play();
 				}, 10000);
 			} else {
 				let nextBtn = document.querySelector('[aria-label="right-arrow"]');
@@ -471,8 +512,9 @@ function showContacts() {
 					setTimeout(parsePage, getRandomInt(minDelay, maxDelay));
 				} else {
 					console.log(data);
+					stopAudioBtn.style.display = 'block';
 					intervalEnd = setInterval(function () {
-						console.log('end');
+						audio.play();
 					}, 10000);
 				}
 			}
@@ -480,13 +522,22 @@ function showContacts() {
 	}
 }
 
+function stopAuido() {
+	clearInterval(intervalEnd);
+	audio.pause();
+	stopAudioBtn.style.display = 'none';
+}
+
+stopAudioBtn.addEventListener('click', stopAuido);
+
 function parsePage() {
 	r_index = 0;
 	rows = document.querySelectorAll('tbody tr');
 	if(rows.length > 0)
-		setTimeout(showContacts, getRandomInt(minDelay, maxDelay));
+		setTimeout(showContacts, getRandomInt(minDelayContact, maxDelayContact));
 	
 }
+
  /*
  rows = document.querySelectorAll('tbody tr');
  cols = rows[0].querySelectorAll('td');
