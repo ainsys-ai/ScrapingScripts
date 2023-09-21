@@ -132,6 +132,13 @@ startButton.addEventListener('click', () => {
     });
 
 
+stopButton.addEventListener('click', () => {
+
+	needStop = true;
+
+});
+
+
 // Функция для копирования данных в буфер обмена
 function copyDataToClipboard() {
   const textarea = document.createElement('textarea');
@@ -267,6 +274,11 @@ function getContacts() {
 	if(needStop) {
 		startButton.disabled =  false;
 		stopButton.disabled = true;
+		stopAudioBtn.style.display = 'block';
+		intervalEnd = setInterval(function () {
+			audio.play();
+		}, 10000);
+
 		console.log(data);
 		return;
 	}
@@ -276,6 +288,10 @@ function getContacts() {
     } else {
 		pages_parsed++;
 		if(pages_parsed >= pages_to_parse) {
+			stopAudioBtn.style.display = 'block';
+			intervalEnd = setInterval(function () {
+				audio.play();
+			}, 10000);
 			console.log(data);
 		} else {
 			let nextBtn = document.querySelector('[aria-label="right-arrow"]');
@@ -410,6 +426,10 @@ function showContacts() {
 				} else {
 					pages_parsed++;
 					if(pages_parsed >= pages_to_parse) {
+						stopAudioBtn.style.display = 'block';
+						intervalEnd = setInterval(function () {
+							audio.play();
+						}, 10000);
 						console.log(data);
 					} else {
 						let nextBtn = document.querySelector('[aria-label="right-arrow"]');
@@ -448,6 +468,10 @@ function showContacts() {
 			if(needStop) {
 				startButton.disabled =  false;
 				stopButton.disabled = true;
+				stopAudioBtn.style.display = 'block';
+				intervalEnd = setInterval(function () {
+					audio.play();
+				}, 10000);
 				console.log(data);
 				return;
 			}
@@ -457,6 +481,10 @@ function showContacts() {
 			} else {
 				pages_parsed++;
 				if(pages_parsed >= pages_to_parse) {
+					stopAudioBtn.style.display = 'block';
+					intervalEnd = setInterval(function () {
+						audio.play();
+					}, 10000);
 					console.log(data);
 				} else {
 					let nextBtn = document.querySelector('[aria-label="right-arrow"]');
