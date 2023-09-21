@@ -7,8 +7,8 @@ var pages_parsed = 0;
 var pages_to_parse = 0;
 var needStop = false;
 // между контактами
-var minDelayContact = 300;
-var maxDelayContact = 600;
+var minDelayContact = 500;
+var maxDelayContact = 800;
 //между страницами
 var minDelay = 1000;
 var maxDelay = 2000;
